@@ -2,13 +2,10 @@ import warnings
 from typing import Union
 import torch
 
-from torchcfm.optimal_transport import BatchCOTPlanSampler, FullCOTPlanSampler
+from cot import BatchCOTPlanSampler, FullCOTPlanSampler
 from torchcfm.conditional_flow_matching import ConditionalFlowMatcher
 
 
-# Based on code from the torchcfm package
-
-# Gavin: TODO documentation
 # This is the "minibatch" version, i.e. fits the COT plan on each minibatch during training.
 class BatchCOTConditionalFlowMatcher(ConditionalFlowMatcher):
     """Child class for optimal transport conditional flow matching method. This class implements

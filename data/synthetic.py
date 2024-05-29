@@ -1,8 +1,7 @@
 import torch
 from sklearn.datasets import make_moons, make_swiss_roll, make_circles
 
-class Dataset:
-
+class SyntheticData:
     def __init__(self, dataset):
         self.dataset = dataset
 
@@ -23,7 +22,7 @@ class Dataset:
 
         if noise == 'gaussian':
             # p(u) = N(0, I)
-            samples[:, 0] = torch.randn((n_samples, 1))
+            samples[:, 0] = torch.randn((n_samples,))
         elif noise == 'independent':
             # p(u) = q(u) is the same u-marginal as the target
             shuffle = torch.randperm(n_samples)

@@ -2,12 +2,8 @@ import torch
 import numpy as np
 
 from torchdiffeq import odeint
-
-"""
-TODO:
-Put everything inside the class
-Make sure to handle scaling
-"""
+from torchdyn.core import NeuralODE
+from torchcfm.utils import *
 
 class LotkaVolterraData:
 
@@ -99,3 +95,44 @@ def simulate(batch_size, n_eval=11, params=None, log=False, clamp_val=1e-4):
     obs = obs.permute([1, 0, 2])
     
     return obs, ode_soln, params
+
+def sample_specific_y(model, log=False, scaler=None, clamp_val=1e-4, n_samples=10_000, device='cuda'):
+    node = NeuralODE(
+        torch_wrapper(model), solver="dopri5", sensitivity="adjoint", atol=1e-4, rtol=1e-4
+    )
+
+    bins = 25
+    n_samples = 10_000
+    
+    # Sample a single observation for this given value of u
+    u = torch.tensor([[0.83, 0.041, 1.08, 0.04]])
+    
+    # Fixed observation (y) used in all experiments
+    obs= torch.tensor([[ 22.7758,   1.0570, 176.1085,  26.7437,   1.9323,  38.7372,   2.7494,
+                           4.2047,  10.1087,   0.9363,  66.3670,   2.6623,   8.8260,  64.2704,
+                           3.6616,   7.7439,   7.9582,   1.9387,  25.7259,   0.7588,  53.5384,
+                          46.6839]])
+
+    obs = torch.log(obs)
+    
+    initial_data = torch.empty((n_samples, 26))    
+    initial_data[:, :22] = obs
+    if scaler:
+        initial_data = scaler.transform(initial_data)
+    initial_data[:, 22:] = torch.randn((n_samples, 4))
+    initial_data = initial_data.float()
+
+    with torch.no_grad():
+        traj = node.trajectory(
+            initial_data.to(device),
+            t_span=torch.linspace(0, 1, 100, device=device),
+        )
+
+        samples = traj[-1].cpu().numpy()
+
+        if scaler:
+            samples = scaler.inverse_transform(samples)
+        if log:
+            samples = torch.exp(samples)
+
+    return samples
