@@ -2,6 +2,8 @@
 
 This repo contains an implementation of COT-FM, as described in our publication [Dynamic Conditional Optimal Transport through Simulation-Free Flows](https://arxiv.org/abs/2404.04240).
 
+Our code is heavily based on the (very nice) [torchcfm](https://github.com/atong01/conditional-flow-matching) package, which is required as a dependency.
+
 ## Environment
 
 Clone the repo and create a conda environment:
