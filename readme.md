@@ -12,17 +12,17 @@ Clone the repo and create a conda environment:
 
 which can be activated with
 
-`conda activate cotfm`.
+`conda activate cotfm`. In order to generate data for the Darcy Flow exeperiments, a separate environment is required for FEniCSx due to compatability issues. Please see [this link](https://github.com/TADSGroup/ConditionalOT2023/tree/main) for further details.
 
-## Usage
+## Structure and Usage
 
-The file `cotfm/trainer.py` contains a basic script for training and tuning models on the datasets considered in the paper.
-
-To launch training (using a random search over hyperparameters), run e.g.
-
+The directory `cotfm/` contains an implementation of COT-FM. The file `cotfm/trainer.py` is a basic script for training and tuning models on the 2D and LV datasets considered in the paper. To launch training (using a random search over hyperparameters), run e.g.
 `python ./cotfm/trainer.py --savedir ./2moons/ --dataset 2moons --cotmode batch`
+changing the `--dataset` as necessary.
 
-changing the `--dataset` as necessary. 
+As the Darcy Flow dataset is of a different nature than the other datasets considered, a somewhat independent implementation for this dataset is contained in the subdirectory `cotfm/darcy_flow/`.
+
+The folder `mcmc/` contains the necessary code for running MCMC on the Lotka-Voltera and Darcy Flow datasets, and all models are implemented in `models/`. The `data/` directory contains various files for generating and loading the datasets considered in our paper.
 
 ## Citation
 
