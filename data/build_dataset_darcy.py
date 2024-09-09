@@ -115,12 +115,12 @@ def make_datapoint(
     Xobs,Yobs=np.meshgrid(x_obs,y_obs)
     sol_observed=sol(Xobs,Yobs,grid=False)
     return sol_observed
-# n=100000
-n=21
-# n_train=10000
-# n_test=5000
-n_train=3
-n_test=2
+n=100000
+# n=21
+n_train=10000
+n_test=5000
+# n_train=3
+# n_test=2
 assert n_train + n_test <= n
 num_kernel_points=40
 print("Sampling Random Fields")
@@ -196,8 +196,8 @@ for i,test_loader in enumerate(test_loaders):
 
 # pre-compute the U_0 samples for evaluation
 rng=np.random.default_rng(seed=105)
-# n=10*5000*5
-n=200
+n=10*5000*5
+# n=200
 
 _,_,permeability_fields,_=sample_permeability_fields(
     matern_three_half(0.5),
