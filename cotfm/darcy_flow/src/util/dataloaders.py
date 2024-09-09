@@ -11,6 +11,7 @@ from tqdm.auto import tqdm
 from torch.utils.data import TensorDataset, DataLoader, Dataset
 from src.util.gaussian_process import make_grid
 from src.util.ot import emd_map, sinkhorn_map, hungarian_matching
+import pdb
 
 class OTSampler(torch.utils.data.Sampler):
     def __init__(self, ot_matrix, replacement=False, shuffle=True):
@@ -182,6 +183,8 @@ def get_darcy_dataloader(
             exclude = np.concatenate([source_idx, target_idx])
         else:
             exclude = np.concatenate([source_idx, target_idx, np.concatenate(test_indices)])
+
+        # print(len(np.setdiff1d(np.arange(len(y_data)), exclude)))
         test_indices.append(np.random.choice(np.setdiff1d(np.arange(len(y_data)), exclude), n_test))
 
     y_data_0 = torch.tensor(y_data[source_idx]).unsqueeze(1).float()

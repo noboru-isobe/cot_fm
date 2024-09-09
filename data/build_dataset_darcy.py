@@ -2,6 +2,7 @@ from pathlib import Path
 import sys
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
+import os
 import numpy as np
 import data.darcySolver as ds
 import matplotlib.pyplot as plt
@@ -9,6 +10,7 @@ from scipy.interpolate import RectBivariateSpline
 from tqdm import tqdm
 from cotfm.darcy_flow.src.util.dataloaders import get_darcy_dataloader
 import torch
+
 
 rng=np.random.default_rng(seed=101)
 
@@ -113,17 +115,23 @@ def make_datapoint(
     Xobs,Yobs=np.meshgrid(x_obs,y_obs)
     sol_observed=sol(Xobs,Yobs,grid=False)
     return sol_observed
-
-params="""
-n=100000
+# n=100000
+n=21
+# n_train=10000
+# n_test=5000
+n_train=3
+n_test=2
+assert n_train + n_test <= n
+num_kernel_points=40
+print("Sampling Random Fields")
+params=f"""
+n={n}
 num_kernel_points=40
 kernel = matern_three_half(0.5)
 eval_points = 100
 """
 
-n=100000
-num_kernel_points=40
-print("Sampling Random Fields")
+
 
 ### Using GPytorch
 # nu = 1.5
@@ -169,13 +177,14 @@ with open('data/params.txt', 'w') as f:
 
 np.save("data/X_observed.npy",X_data_observed)
 np.save("data/true_permeability_fields.npy",np.array(permeability_fields))
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
 dataloader, test_loaders, Y_transform = get_darcy_dataloader(
     batch_size=128,
-    n_train=10000,
-    n_test=5000,
+    n_train=n_train,
+    n_test=n_test,
     noise_level_y_observed=0.025,
-    path_prefix = '../data/new',
+    path_prefix = current_dir,
     shuffle=True,
     coupling='none',
     prod_measure=True
@@ -187,7 +196,8 @@ for i,test_loader in enumerate(test_loaders):
 
 # pre-compute the U_0 samples for evaluation
 rng=np.random.default_rng(seed=105)
-n=10*5000*5
+# n=10*5000*5
+n=200
 
 _,_,permeability_fields,_=sample_permeability_fields(
     matern_three_half(0.5),
@@ -196,4 +206,4 @@ _,_,permeability_fields,_=sample_permeability_fields(
     )
 gp_tensor = torch.tensor(permeability_fields).unsqueeze(1).log().float()
 gp_dataset = torch.utils.data.TensorDataset(gp_tensor)
-torch.save(gp_dataset, '../data/gp_dataset.pt')
+torch.save(gp_dataset, current_dir + '/gp_dataset.pt')
