@@ -1,12 +1,13 @@
+from pathlib import Path
 import sys
-sys.path.append('../')
-
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 import numpy as np
 import data.darcySolver as ds
 import matplotlib.pyplot as plt
 from scipy.interpolate import RectBivariateSpline
 from tqdm import tqdm
-from src.util.dataloaders import get_darcy_dataloader
+from cotfm.darcy_flow.src.util.dataloaders import get_darcy_dataloader
 import torch
 
 rng=np.random.default_rng(seed=101)
