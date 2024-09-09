@@ -1,6 +1,7 @@
+from pathlib import Path
 import sys
-sys.path.append('../')
-
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 import numpy as np

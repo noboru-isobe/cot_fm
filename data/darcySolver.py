@@ -6,12 +6,13 @@ Paper: Hosseini, B., Hsu, A. W., & Taghvaei, A. (2023). Conditional Optimal Tran
 
 from mpi4py import MPI
 from dolfinx import mesh
-from dolfinx.fem import FunctionSpace
+from dolfinx.fem import functionspace
 from dolfinx import fem
+from dolfinx.fem import petsc
 import ufl
 import numpy as np
 from dataclasses import dataclass
-
+import pdb
 from petsc4py.PETSc import ScalarType
 from scipy.interpolate import RectBivariateSpline
 from dolfinx import geometry
@@ -49,7 +50,7 @@ class DarcySolver():
             self.num_y_cells
         )
 
-        self.V = FunctionSpace(
+        self.V = functionspace(
             self.domain,
             (self.function_space_type, self.function_space_degree)
         )
@@ -116,11 +117,11 @@ class DarcySolver():
         elif points.shape[1] == 3:
             eval_points = points.copy()
 
-        bb_tree = geometry.BoundingBoxTree(
+        bb_tree = geometry.bb_tree(
             self.domain, self.domain.topology.dim)
         cells = []
         # Find cells whose bounding-box collide with the the points
-        cell_candidates = geometry.compute_collisions(bb_tree, eval_points)
+        cell_candidates = geometry.compute_collisions_points(bb_tree, eval_points)
 
         # Compute the cells that contain each point
         colliding_cells = geometry.compute_colliding_cells(

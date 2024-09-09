@@ -1,23 +1,26 @@
 name: cotfm
 channels:
+  - conda-forge
   - pytorch
   - nvidia
-  - anaconda
-  - conda-forge
   - defaults
 dependencies:
-  - python=3.10
-  - numpy=1.25.2
-  - pytorch=2.2
-  - pytorch-cuda=11.8
-  - cudatoolkit=11.8
-  - torchaudio=2.2.2
-  - torchvision=0.17.2
+  - python
+  - numpy
+  - pytorch
+  - pytorch-cuda
+  - torchaudio
+  - torchvision
   - matplotlib
   - scipy
   - lightning
   - pysteps
   - pip
+  - fenics-dolfinx
+  - mpich
+  - petsc
+  - mpi4py
+  - hdf5>=1.12.2
   - pip:
     - tqdm==4.64
     - torchcfm
